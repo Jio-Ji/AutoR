@@ -49,12 +49,28 @@ public class AUTOR {
                         System.out.println("Please input a valid index for actions.");
                         continue;
                     }
-
                     if (action == 1) {
                         System.out.println("Action: go to Login page.");
                         console.close();
                         login();
                     } else if (action == 2) {
+                        System.out.println("Action: Sign up.");
+                        System.out.println("Please input your id.");
+                        long num = 0;
+                        if (scanner.hasNext()) {
+                            num = Long.parseLong(scanner.next());
+                        }
+                        System.out.println("Please input the index to indicate your role: \n" +
+                                "1.Admin 2.Manager 3.Customer 4.Receptionist 5.Mechanic\n");
+                        if (scanner.hasNextInt()) {
+                            Insert.user_pw_Insert(num, scanner.nextInt());
+                        } else {
+                            System.out.println("Invalid Role.");
+                        }
+                        console.close();
+                        home();
+                        break;
+                    }else if (action == 3) {
                         console.close();
                         System.out.println("Action: Exit.");
                         break;
