@@ -1,6 +1,7 @@
 package edu.ncsu.csc.AUTOR;
 
 import edu.ncsu.csc.TABLE.InitializeTables;
+import edu.ncsu.csc.ROW.Insert;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -28,17 +29,15 @@ public class AUTOR {
 
     // the home page
     public static void home() {
-        System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
-        System.out.println("You may Login, Sign-Up, or Exit.");
-        System.out.println("Please input the index at first for actions.");
-        System.out.println("1. Login");
-        System.out.println("Sign-Up还没实现");
-        System.out.println("2. Exit\n");
-
         Scanner scanner = new Scanner(System.in);
-
         int action = 0;
-        while (scanner.hasNext()) {
+        while (true) {
+            System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
+            System.out.println("You may Login, Sign-Up, or Exit.");
+            System.out.println("Please input the index at first for actions.");
+            System.out.println("1. Login");
+            System.out.println("2. Sign-Up");
+            System.out.println("3. Exit\n");
             action = 0;
             String s = scanner.next();
             Scanner console = new Scanner(s);
@@ -52,7 +51,7 @@ public class AUTOR {
                     if (action == 1) {
                         System.out.println("Action: go to Login page.");
                         console.close();
-                        login();
+                        login(scanner);
                     } else if (action == 2) {
                         System.out.println("Action: Sign up.");
                         System.out.println("Please input your id.");
@@ -90,24 +89,21 @@ public class AUTOR {
     }
 
     // ready to login
-    public static void login() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Please input your user ID (If you don't know or don't have, just input something).");
-        String id = sc.next();
-        System.out.println("Please input your password (If you don't know or don't have, just input something).");
-        String password = sc.next();
-
-
-
-        System.out.println("What's your next action?");
-        System.out.println("Please input the index at first for actions.");
-        System.out.println("1. Sign-In");
-        System.out.println("2. Go Back\n");
-
-        Scanner scanner = new Scanner(System.in);
+    public static void login(Scanner scanner ) {
+        //Scanner sc = new Scanner(System.in);
+        //Scanner scanner = new Scanner(System.in);
 
         int action = 0;
-        while (scanner.hasNext()) {
+        while (true) {
+            System.out.println("Please input your user ID (If you don't know or don't have, just input something).");
+            String id = scanner.next();
+            System.out.println("Please input your password (If you don't know or don't have, just input something).");
+            String password = scanner.next();
+            System.out.println("What's your next action?");
+            System.out.println("Please input the index at first for actions.");
+            System.out.println("1. Sign-In");
+            System.out.println("2. Go Back\n");
+
             action = 0;
             String s = scanner.next();
             Scanner console = new Scanner(s);
@@ -119,14 +115,14 @@ public class AUTOR {
                         continue;
                     }
                     if (action == 1) {
-                        System.out.println("Action: Sign-In.");
+                        System.out.println("Action: Sign-In.\n");
                         console.close();
-                        System.out.println("SELECT id, password FROM ?  还没实现");
-                        //break;
+                        checkUserPW(id, password);
+                        continue;
                     } else if (action == 2) {
                         console.close();
                         System.out.println("Action: Go back.");
-                        home();
+                        //home();
                         break;
                     } else {
                         System.out.println("Please input a valid index for actions.");
@@ -140,7 +136,119 @@ public class AUTOR {
                 System.out.println("Please input a valid index for actions.");
             }
         }
-        sc.close();
-        scanner.close();
+        //sc.close();
+        //scanner.close();
+    }
+
+    /**
+     * check if the user and pwd match one row in USERPW TABLE
+     */
+    public static void checkUserPW (String id, String password) {
+        /*// 等会删掉
+        Statement stmt = null;
+        try (
+                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123" )) {
+
+            stmt = conn.createStatement();
+            stmt.executeUpdate("CREATE TABLE USERPW (" +
+                                                "u_id NUMBER(20) PRIMARY KEY, " +
+                                                "PWD VARCHAR(20)," +
+                                                "ROLE INTEGER)");
+            //stmt.executeUpdate( "ALTER TABLE USERPW " + "ADD CONSTRAINT userpw_pk PRIMARY KEY (U_ID)");
+        }catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+        // -------*/
+        // Connection conn = null;
+        Statement stmt = null;
+        //stmt = null;
+        try (
+                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123" ) ) {
+
+            stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM USERPW");
+
+            long USERPW_id = 0;
+            String USERPW_pwd = "";
+            int USERPW_role = 0;
+            while (resultSet.next()) {
+                USERPW_id = resultSet.getLong("u_id");
+                USERPW_pwd = resultSet.getString("PWD");
+                USERPW_role = resultSet.getInt("ROLE");
+
+                if (resultSet.next()) {
+                    System.out.println("Multi user match!");
+                    System.out.println("Something goes wrong!");
+                    System.out.println("In AUTOR, checkUserPW() method");
+                }
+
+
+            }
+
+            if (id.equals(String.valueOf(USERPW_id)) && password.equals(USERPW_pwd)) {
+                switch (USERPW_role) {
+                    case 1:
+                        Admin admin = new Admin((int)USERPW_id);
+                        break;
+                    case 2:
+                        //Manager manager = new Manager((long)USERPW_id);
+                        break;
+                    case 3:
+                        //Customer customer = new Customer((long)USERPW_id);
+                        break;
+                    case 4:
+                        //Receptionist receptionist = new Receptionist((long)USERPW_id);
+                        break;
+                    case 5:
+                        //Mechanic mechanic = new Mechanic((long)USERPW_id);
+                        break;
+                    default:
+                        System.out.println("In AUTOR, checkUserPW() method");
+                        break;
+                }
+            } else {
+                System.out.println("Your id or password is invalid.");
+                System.out.println("Please input valid id and password, or sign-up at the previous page.\n");
+            }
+
+
+        }
+        catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+
+
+    }
+
+    /**
+     * Close the statement.
+     *
+     * @param st
+     *            the statement
+     */
+    static void close ( final Statement st ) {
+        if ( st != null ) {
+            try {
+                st.close();
+            }
+            catch ( final Throwable whatever ) {
+            }
+        }
     }
 }

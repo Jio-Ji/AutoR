@@ -10,13 +10,46 @@ public class InitializeTables {
 
 
     // 创建所有TABLE
-    /*public InitializeTables() {
-        center();
+    public InitializeTables() {
+        user_pw();
+        // insert default data
+        System.out.println(1);
+        center(); // center edu.ncsu.csc.TABLE.table
+        System.out.println(2);
         emp();
-    }*/
+        System.out.println(3);
+        vehicle();
+        System.out.println(4);
+        customer();
+        System.out.println(5);
+        associate();
+
+        System.out.println(6);
+        //SQL State: 42000
+        //ORA-00942: 表或视图不存在
+        invoice();
+
+        System.out.println(7);
+        service();
+
+        System.out.println(8);
+        //SQL State: 42000
+        //ORA-02264: 名称已被一现有约束条件占用
+        indserv();
+
+        System.out.println(9);
+        repair();
+        System.out.println(10);
+        tire_service();
+        System.out.println(11);
+        rser();
+        //Maintenance();
+        //MSch();
+    }
+
 
     //
-    public static void main ( final String[] args ) {
+    /*public static void main ( final String[] args ) {
         // initialize all tables
         user_pw();
         // insert default data
@@ -34,7 +67,7 @@ public class InitializeTables {
         //Maintenance();
         //MSch();
 
-    }
+    }*/
 
 
 
@@ -42,9 +75,26 @@ public class InitializeTables {
      *  DELETE ORDER
      *
      */
-    public void dropAllTable() {
-        //may implement later
-    }
+    /*public void dropAllTable() {
+        Statement stmt = null;
+        try (
+                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123" )) {
+
+            stmt = conn.createStatement();
+            stmt.executeUpdate("DROP TABLE USERPW ");
+            stmt.executeUpdate("DROP TABLE USERPW ");
+        }catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+    }*/
     public static void user_pw() {
         Statement stmt = null;
         try (
@@ -52,9 +102,11 @@ public class InitializeTables {
                         "123" )) {
 
             stmt = conn.createStatement();
-            stmt.executeUpdate("CREATE TABLE USERPW " + "(u_id NUMBER(20), PWD VARCHAR(20),"
-                    + "ROLE TINYINT");
-            stmt.executeUpdate( "ALTER TABLE USERPW " + "ADD CONSTRAINT userpw_pk PRIMARY KEY (U_ID)");
+            stmt.executeUpdate("CREATE TABLE USERPW (" +
+                    "u_id NUMBER(20) PRIMARY KEY, " +
+                    "PWD VARCHAR(20)," +
+                    "ROLE INTEGER)");
+            //stmt.executeUpdate( "ALTER TABLE USERPW " + "ADD CONSTRAINT userpw_pk PRIMARY KEY (U_ID)");
         }catch ( final SQLException e ) {
             System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
         }
