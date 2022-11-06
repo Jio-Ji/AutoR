@@ -206,7 +206,7 @@ public class InitializeTables {
                         "123" ) ) {
 
             stmt = conn.createStatement();
-            stmt.executeUpdate( "CREATE TABLE ASSOCIATE " + "(vin VARCHAR(20), CUSTOMER_ID VARCHAR(20)) ");
+            stmt.executeUpdate( "CREATE TABLE ASSOCIATE " + "(vin VARCHAR(20), C_ID VARCHAR(20)) ");
             // Add constraint
             stmt.executeUpdate( "ALTER TABLE ASSOCIATE " + "ADD CONSTRAINT vin_pk FOREIGN KEY(vin)REFERENCES vehicle(vin)");
             stmt.executeUpdate( "ALTER TABLE ASSOCIATE " + "ADD CONSTRAINT cus_pk FOREIGN KEY(C_ID)REFERENCES CUSTOMER(CUSTOMER_ID)");
@@ -262,7 +262,6 @@ public class InitializeTables {
                     + "CENTER_TELEPHONE INTEGER)" );
             // Add a primary key
             stmt.executeUpdate( "ALTER TABLE CENTER " + "ADD CONSTRAINT center_pk PRIMARY KEY (CENTER_ID)" );
-
         }
         catch ( final SQLException e ) {
             System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
@@ -323,6 +322,84 @@ public class InitializeTables {
             // close(conn);
         }
     }
+
+    private static void rser() {
+        // Connection conn = null;
+        Statement stmt = null;
+        try (
+                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123" ) ) {
+
+            stmt = conn.createStatement();
+            stmt.executeUpdate( "CREATE TABLE RSER " +
+                                        "(R_ID INTEGER NOT NULL REFERENCES REPAIR(REPAIR_ID) PRIMARY KEY, " +
+                                        "I_ID INTEGER NOT NULL, " +
+                                        "r_cent VARCHAR(20) NOT NULL, "+
+                                        "RS_NAME VARCHAR(20))" );
+            stmt.executeUpdate( "ALTER TABLE RSER " + "ADD CONSTRAINT tfk FOREIGN KEY(I_ID,r_cent) REFERENCES INDSERV(IND_ID, IND_CENTER)");
+        }
+        //NOT NULL REFERENCES INDSERV(IND_ID)
+        //NOT NULL REFERENCES INDSERV(IND_CENTER)
+        catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+    }
+
+   private static void MSch(){
+        Statement stmt = null;
+
+        try (Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                      "123" )){
+
+            stmt = conn.createStatement();
+            stmt.executeUpdate(" CREATE TABLE MSch " + "(MS_name varchar(20),"+ "Ms_id INTEGER NOT NULL REFERENCES Maintenance(M_id),"+"Ms_iid INTEGER NOT NULL," +"Ms_cent VARCHAR(20) NOT NULL)");
+
+
+            stmt.executeUpdate("ALTER TABLE MSch"+ "ADD CONSTRAINT MSch_fk FOREIGN KEY(Ms_iid,MS_cent) REFEREBCES INDSERV(IND_ID, IND_CENTER)");
+            stmt.executeUpdate("ALTER TABLE MSch"+ "ADD CONSTRAINT MSch_fk1 FOREIGN KEY REFEREBCES Maintenance(M_id)");
+            stmt.executeUpdate("ALTER TABLE MSch " + "ADD CONSTRAINT MSch_pk PRIMARY KEY (Ms_iid, M_id)");
+        } catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+    }
+//    CREATE TABLE Maintenance(
+//            M_id Integer(20) NOT NULL REFERENCES Service(sid),
+//    M_name(20),
+//    primary key(sid)
+//);
+    private static void Maintenance() {
+        Statement stmt = null;
+        try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system",
+                "123")) {
+            stmt.executeUpdate("CREATE TABLE Maintenance" + "(M_id Integer(20) NOT NULL REFERENCES Service(sid) PRIMARY KEY," +
+                    "M_name VARCHAR(20)" );
+
+        } catch (final SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        } catch (final Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(stmt);
+            // close(conn);
+        }
+    }
+
+
+
 
 
     /**
