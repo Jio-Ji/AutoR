@@ -1,6 +1,8 @@
 package edu.ncsu.csc.AUTOR;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Receptionist {
@@ -20,11 +22,14 @@ public class Receptionist {
         main();
     }
 
-    public static void main () {
-        System.out.println( "1.Add New Customer Profile" );
-        System.out.println( "2.Find Customers with Pending Invoices" );
-        System.out.println( "3.Log out" );
-        final Scanner sc = new Scanner( System.in );
+    public static void receptionistPage (Scanner sc) {
+        boolean login = true;
+        while ( login ) {
+            System.out.println( "Please enter a choice." );
+            System.out.println( "\n1.Add New Customer Profile" );
+            System.out.println( "2.Find Customers with Pending Invoices" );
+            System.out.println( "3.Log out" );
+            //final Scanner sc = new Scanner( System.in );
 
         while ( sc.hasNextLine() ) {
             final String input = sc.nextLine();
@@ -61,46 +66,50 @@ public class Receptionist {
                     "123" );
             stmt = conn.createStatement();
 
-            // test
-            /**
-             * stmt.executeUpdate( "DROP TABLE INVOICE" );
-             *
-             * stmt.executeUpdate( "CREATE TABLE INVOICE " + "(INVOICE_ID
-             * INTEGER PRIMARY KEY, INVOICE_CUSTOMERID INTEGER," + "
-             * INVOICE_DATE DATE, INVOICE_PRICE INTEGER, INVOICE_STATUS CHAR(1)
-             * DEFAULT 'f')" );
-             *
-             * final PreparedStatement ps = conn .prepareStatement( "INSERT INTO
-             * INVOICE (INVOICE_ID, INVOICE_CUSTOMERID, INVOICE_DATE, " +
-             * "INVOICE_PRICE, INVOICE_STATUS) VALUES(?,?,?,?,'t')" );
-             * ps.setInt( 1, 1111 ); ps.setInt( 2, 123 ); ps.setDate( 3,
-             * java.sql.Date.valueOf( "1111-11-11" ) ); ps.setInt( 4, 333 );
-             * ps.executeUpdate(); ps.close();
-             */
-            System.out.println( "1" );
+            final String queryCustomer = "SELECT emp_center FROM emp WHERE emp_id =" + receptionist_id;
 
-            // select query - implement later
-            final String queryCustomer = "SELECT customer_id, customer_name FROM customer";
-            System.out.println( "2" );
-            final ResultSet rs = stmt.executeQuery( queryCustomer );
-            System.out.println( "3" );
+            ResultSet rs = stmt.executeQuery( queryCustomer );
             while ( rs.next() ) {
-                final int a = rs.getInt( "customer_id" );
-                final String b = rs.getString( "customer_name" );
-                // final int c = rs.getInt( "invoice_id" );
-                // final Date d = rs.getDate( "invoice_date" );
-                // final double e = rs.getDouble( "invoice_price" );
-                System.out.println( "A. Customer ID" );
-                System.out.println( a );
-                System.out.println( "B. Customer name" );
-                System.out.println( b );
-                // System.out.println( "C. Invoice ID" + c );
-                // System.out.println( "D. Invoice Date" + d );
-                // System.out.println( "E. Amount" + e );
-                System.out.println( " " );
+                center_id = rs.getInt( "emp_center" );
             }
-            System.out.println( "4" );
+            rs.close();
+            // select query - implement later
+            final String queryCustomer3 = "select in_customer, in_id, in_date, in_cost from invoice where in_center = "
+                    + center_id + " and in_status = 'f'";
+            rs = stmt.executeQuery( queryCustomer3 );
+            final List<Integer> in_customer = new ArrayList<>();
+            final List<Integer> in_id = new ArrayList<>();
+            final List<String> in_date = new ArrayList<>();
+            final List<Integer> in_cost = new ArrayList<>();
 
+            while ( rs.next() ) {
+                in_customer.add( rs.getInt( "in_customer" ) );
+                in_id.add( rs.getInt( "in_id" ) );
+                in_date.add( rs.getString( "in_date" ) );
+                in_cost.add( rs.getInt( "in_cost" ) );
+
+            }
+            rs.close();
+            for ( int i = 0; i < in_customer.size(); i++ ) {
+                final String queryFindCustomerName = "select customer_name from customer where customer_id ="
+                        + in_customer.get( i ) + " and customer_center_id =" + center_id;
+                rs = stmt.executeQuery( queryFindCustomerName );
+                while ( rs.next() ) {
+                    System.out.println( "A. Customer ID" );
+                    System.out.println( in_customer.get( i ) );
+                    System.out.println( "B. Customer Name" );
+                    System.out.println( rs.getString( "customer_name" ) );
+                    System.out.println( "C. Invoice ID" );
+                    System.out.println( in_id.get( i ) );
+                    System.out.println( "D. Invoice Date" );
+                    System.out.println( in_date.get( i ) );
+                    System.out.println( "E. Amount" );
+                    System.out.println( in_cost.get( i ) );
+                    System.out.println( " " );
+
+                }
+                rs.close();
+            }
         }
         catch ( final SQLException e ) {
             System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
@@ -127,7 +136,7 @@ public class Receptionist {
 
             if ( count == 1 ) {
                 sc.close();
-                main();
+                receptionistPage(sc);
                 break;
             }
         }

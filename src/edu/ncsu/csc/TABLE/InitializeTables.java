@@ -1,3 +1,4 @@
+/*
 package edu.ncsu.csc.TABLE;
 
 import java.sql.Connection;
@@ -49,7 +50,8 @@ public class InitializeTables {
 
 
     //
-    /*public static void main ( final String[] args ) {
+    */
+/*public static void main ( final String[] args ) {
         // initialize all tables
         user_pw();
         // insert default data
@@ -67,15 +69,19 @@ public class InitializeTables {
         //Maintenance();
         //MSch();
 
-    }*/
+    }*//*
 
 
 
-    /**
+
+    */
+/**
      *  DELETE ORDER
      *
-     */
-    /*public void dropAllTable() {
+     *//*
+
+    */
+/*public void dropAllTable() {
         Statement stmt = null;
         try (
                 Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
@@ -94,7 +100,8 @@ public class InitializeTables {
             close( stmt );
             // close(conn);
         }
-    }*/
+    }*//*
+
     public static void user_pw() {
         Statement stmt = null;
         try (
@@ -299,9 +306,11 @@ public class InitializeTables {
         }
     }
 
-    /**
+    */
+/**
      * Initialize the center edu.ncsu.csc.TABLE.table.
-     */
+     *//*
+
     public static void center () {
         // Connection conn = null;
         Statement stmt = null;
@@ -454,12 +463,14 @@ public class InitializeTables {
 
 
 
-    /**
+    */
+/**
      * Close the statement.
      *
      * @param st
      *            the statement
-     */
+     *//*
+
     static void close ( final Statement st ) {
         if ( st != null ) {
             try {
@@ -471,3 +482,4 @@ public class InitializeTables {
     }
 
 }
+*/

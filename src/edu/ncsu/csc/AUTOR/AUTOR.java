@@ -13,17 +13,9 @@ public class AUTOR {
         InitializeTables temp = new InitializeTables();// 初始化所有TABLE，记得在init里边启用constructor
         home();
 
-
-
-
-
-
-
-
-
-
-
-
+        Scanner scanner = new Scanner(System.in);
+        home(scanner);
+        scanner.close();
         System.out.println("Goodbye!");
     }
 

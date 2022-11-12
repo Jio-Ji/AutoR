@@ -650,7 +650,43 @@ public class Customer {
     private static void invoices ( final Scanner console ) {
         while ( true ) {
             // display invoices
-
+            System.out.println( "The list of your invoices:" );
+            ResultSet rs = null;
+            Statement stmt = null;
+            final List<Integer> invoiceId = new ArrayList<Integer>();
+            try (
+                    Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                            "123" ) ) {
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery( "select in_id, in_status from invoice where in_customer =" + customer_id
+                        + " and in_center = " + center_id );
+                while ( rs.next() ) {
+                    final StringBuffer invoice = new StringBuffer();
+                    invoice.append( "Invoice id:" );
+                    final int temp = rs.getInt( "in_id" );
+                    invoiceId.add( temp );
+                    invoice.append( temp );
+                    invoice.append( ", " );
+                    if ( rs.getString( "in_status" ).equals( "f" ) ) {
+                        invoice.append( "unpaid" );
+                    }
+                    else {
+                        invoice.append( "paid" );
+                    }
+                    System.out.println( invoice );
+                }
+            }
+            catch ( final SQLException e ) {
+                System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+            }
+            catch ( final Exception e ) {
+                e.printStackTrace();
+            }
+            finally {
+                close( stmt );
+                close( rs );
+            }
+            System.out.print( "\n" );
             System.out.println( "Please enter a choice." );
             System.out.println( "1. View Invoice details" );
             System.out.println( "2. Pay invoice" );
@@ -661,23 +697,23 @@ public class Customer {
                 choose = Integer.parseInt( input );
             }
             catch ( final NumberFormatException e ) {
-                System.out.println( "Your choice is invalid.\\n" );
+                System.out.println( "Your choice is invalid.\n" );
                 continue;
             }
             if ( choose == 1 ) {
                 // view invoice details
-                viewInvoiceDetails( console );
+                viewInvoiceDetails( console, invoiceId );
             }
             else if ( choose == 2 ) {
                 // pay invoice
-                payInvoice( console );
+                payInvoice( console, invoiceId );
             }
             else if ( choose == 3 ) {
                 // go back
                 break;
             }
             else {
-                System.out.println( "Your choice is invalid.\\n" );
+                System.out.println( "Your choice is invalid.\n" );
                 continue;
             }
         }
@@ -689,10 +725,22 @@ public class Customer {
      * @param console
      *            the scanner
      */
-    private static void viewInvoiceDetails ( final Scanner console ) {
+    private static void viewInvoiceDetails ( final Scanner console, final List<Integer> invoices ) {
         while ( true ) {
             System.out.println( "Please enter the invoice ID." );
             final String invoice = console.nextLine();
+            int id = 0;
+            try {
+                id = Integer.parseInt( invoice );
+            }
+            catch ( final NumberFormatException e ) {
+                System.out.println( "Your invoice id is invalid.\n" );
+                continue;
+            }
+            if ( !invoices.contains( id ) ) {
+                System.out.println( "Your invoice id is invalid.\n" );
+                continue;
+            }
             System.out.println( "Please enter a choice." );
             System.out.println( "1. View Invoice" );
             System.out.println( "2. Go Back\n" );
@@ -702,19 +750,91 @@ public class Customer {
                 choose = Integer.parseInt( input );
             }
             catch ( final NumberFormatException e ) {
-                System.out.println( "Your choice is invalid.\\n" );
+                System.out.println( "Your choice is invalid.\n" );
                 continue;
             }
             if ( choose == 1 ) {
                 // view invoice details
+                ResultSet rs = null;
+                Statement stmt = null;
+                try (
+                        Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                                "123" ) ) {
+                    stmt = conn.createStatement();
+                    final StringBuffer detail = new StringBuffer();
+                    detail.append( "Invoice ID:" );
+                    detail.append( id );
+                    detail.append( "\n" );
+                    detail.append( "Customer ID:" );
+                    detail.append( customer_id );
+                    detail.append( "\n" );
+                    rs = stmt.executeQuery(
+                            "select in_vin, in_date, in_status, in_mechanicName, in_cost from invoice where in_id="
+                                    + id );
+                    String status = null;
+                    String name = null;
+                    int total = 0;
+                    while ( rs.next() ) {
+                        detail.append( "VIN:" );
+                        detail.append( rs.getString( 1 ) );
+                        detail.append( "\n" );
+                        detail.append( "Service Date:" );
+                        detail.append( rs.getString( 2 ) );
+                        detail.append( "\n" );
+                        status = rs.getString( 3 );
+                        name = rs.getString( 4 );
+                        total = rs.getInt( "in_cost" );
+                    }
+                    close( rs );
 
+                    rs = stmt.executeQuery(
+                            "select inAndS_service, inAndS_type, inAndS_price from invoiceAndService where inAndS_id="
+                                    + id );
+                    while ( rs.next() ) {
+                        detail.append( "Service ID:" );
+                        detail.append( rs.getInt( "inAndS_service" ) );
+                        detail.append( "\n" );
+                        detail.append( "Service Type:" );
+                        detail.append( rs.getString( "inAndS_type" ) );
+                        detail.append( "\n" );
+                        detail.append( "Service Cost:" );
+                        detail.append( rs.getInt( "inAndS_price" ) );
+                        detail.append( "\n" );
+                    }
+                    detail.append( "Invoice Status:" );
+                    if ( status.equals( "f" ) ) {
+                        detail.append( "unpaid" );
+                    }
+                    else {
+                        detail.append( "paid" );
+                    }
+
+                    detail.append( "\n" );
+                    detail.append( "Mechanic's name:" );
+                    detail.append( name );
+                    detail.append( "\n" );
+                    detail.append( "Total Cost:" );
+                    detail.append( total );
+                    System.out.println( detail );
+                }
+                catch ( final SQLException e ) {
+                    System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+                }
+                catch ( final Exception e ) {
+                    e.printStackTrace();
+                }
+                finally {
+                    close( stmt );
+                    close( rs );
+                }
+                continue;
             }
             else if ( choose == 2 ) {
                 // go back
                 break;
             }
             else {
-                System.out.println( "Your choice is invalid.\\n" );
+                System.out.println( "Your choice is invalid.\n" );
                 continue;
             }
         }
@@ -726,10 +846,22 @@ public class Customer {
      * @param console
      *            the scanner
      */
-    private static void payInvoice ( final Scanner console ) {
+    private static void payInvoice ( final Scanner console, final List<Integer> invoices ) {
         while ( true ) {
             System.out.println( "Please enter the invoice ID." );
             final String invoice = console.nextLine();
+            int id = 0;
+            try {
+                id = Integer.parseInt( invoice );
+            }
+            catch ( final NumberFormatException e ) {
+                System.out.println( "Your invoice id is invalid.\n" );
+                continue;
+            }
+            if ( !invoices.contains( id ) ) {
+                System.out.println( "Your invoice id is invalid.\n" );
+                continue;
+            }
             System.out.println( "Please enter a choice." );
             System.out.println( "1. Pay Invoice" );
             System.out.println( "2. Go Back\n" );
@@ -739,12 +871,41 @@ public class Customer {
                 choose = Integer.parseInt( input );
             }
             catch ( final NumberFormatException e ) {
-                System.out.println( "Your choice is invalid.\\n" );
+                System.out.println( "Your choice is invalid.\n" );
                 continue;
             }
             if ( choose == 1 ) {
                 // pay voice
-
+                ResultSet rs = null;
+                Statement stmt = null;
+                try (
+                        Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                                "123" ) ) {
+                    stmt = conn.createStatement();
+                    rs = stmt.executeQuery( "select in_status from invoice where in_id=" + id );
+                    String status = null;
+                    while ( rs.next() ) {
+                        status = rs.getString( 1 );
+                    }
+                    if ( status.equals( "t" ) ) {
+                        System.out.println( "The invoice is already paid." );
+                    }
+                    else {
+                        stmt.executeUpdate( "update invoice set in_status = 't' where in_id =" + id );
+                        System.out.println( "The invoice is successfully paid." );
+                    }
+                }
+                catch ( final SQLException e ) {
+                    System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+                }
+                catch ( final Exception e ) {
+                    e.printStackTrace();
+                }
+                finally {
+                    close( stmt );
+                    close( rs );
+                }
+                continue;
             }
             else if ( choose == 2 ) {
                 // go back
