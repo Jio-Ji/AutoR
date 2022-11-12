@@ -1,6 +1,6 @@
 package edu.ncsu.csc.AUTOR;
 
-import edu.ncsu.csc.TABLE.InitializeTables;
+
 import edu.ncsu.csc.ROW.Insert;
 
 import java.sql.*;
@@ -23,8 +23,10 @@ public class AUTOR {
 
         int action = 0;
         while (true) {
+            System.out.println();
             System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
             System.out.println("You may Login, Sign-Up, or Exit.");
+            System.out.println();
             System.out.println("Please input the index at first for actions.");
             System.out.println("1. Login");
             System.out.println("2. Sign-Up");
@@ -81,7 +83,7 @@ public class AUTOR {
     }
 
     // ready to login
-    public static void login(Scanner scanner ) {
+    public static void login(Scanner scanner) {
         //Scanner sc = new Scanner(System.in);
         //Scanner scanner = new Scanner(System.in);
 
@@ -91,7 +93,7 @@ public class AUTOR {
             String id = scanner.next();
             System.out.println("Please input your password (If you don't know or don't have, just input something).");
             String password = scanner.next();
-            System.out.println("What's your next action?");
+//            System.out.println("What's your next action?");
             System.out.println("Please input the index at first for actions.");
             System.out.println("1. Sign-In");
             System.out.println("2. Go Back\n");
@@ -135,7 +137,7 @@ public class AUTOR {
     /**
      * check if the user and pwd match one row in USERPW TABLE
      */
-    public static void checkUserPW (String id, String password) {
+    public static void checkUserPW(String id, String password, Scanner scanner) {
         /*// 等会删掉
         Statement stmt = null;
         try (
@@ -163,8 +165,8 @@ public class AUTOR {
         Statement stmt = null;
         //stmt = null;
         try (
-                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
-                        "123" ) ) {
+                Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123")) {
 
             stmt = conn.createStatement();
             ResultSet resultSet = stmt.executeQuery("SELECT * FROM user_pw WHERE u_id=" + id);
@@ -191,7 +193,7 @@ public class AUTOR {
                 System.out.println("Logging in...\n");
                 switch (USERPW_role) {
                     case 1:
-                        Admin admin = new Admin((int)USERPW_id);
+                        Admin admin = new Admin((int) USERPW_id);
                         break;
                     case 2:
                         Manager manager = new Manager((int) USERPW_id, scanner);
@@ -215,33 +217,26 @@ public class AUTOR {
             }
 
 
-        }
-        catch ( final SQLException e ) {
-            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
-        }
-        catch ( final Exception e ) {
+        } catch (final SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        } catch (final Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            close( stmt );
+        } finally {
+            close(stmt);
             // close(conn);
         }
-
-
     }
 
     /**
      * Close the statement.
      *
-     * @param st
-     *            the statement
+     * @param st the statement
      */
-    static void close ( final Statement st ) {
-        if ( st != null ) {
+    static void close(final Statement st) {
+        if (st != null) {
             try {
                 st.close();
-            }
-            catch ( final Throwable whatever ) {
+            } catch (final Throwable whatever) {
             }
         }
     }
