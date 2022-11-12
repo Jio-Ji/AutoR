@@ -110,7 +110,7 @@ public class InitializeTables {
 
             stmt = conn.createStatement();
             stmt.executeUpdate("CREATE TABLE USERPW (" +
-                    "u_id NUMBER(20) PRIMARY KEY, " +
+                    "u_id VARCHAR(20) PRIMARY KEY, " +
                     "PWD VARCHAR(20)," +
                     "ROLE INTEGER)");
             //stmt.executeUpdate( "ALTER TABLE USERPW " + "ADD CONSTRAINT userpw_pk PRIMARY KEY (U_ID)");
