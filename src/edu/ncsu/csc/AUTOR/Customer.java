@@ -17,7 +17,7 @@ public class Customer {
      * @param loginUserId
      *            the customer user id
      */
-    public Customer ( final long loginUserId ) {
+    public Customer ( final long loginUserId, Scanner scanner) {
         System.out.println( "Access to Customer Landing page." );
         // Customer user id is 10
         final String str_customer_user = Long.toString( loginUserId );
@@ -35,8 +35,8 @@ public class Customer {
      * Landing page. 1. View and Update Profile 2. View and Schedule Service 3.
      * Invoices 4. Logout
      */
-    private static void home () {
-        final Scanner console = new Scanner( System.in );
+    private static void home (Scanner console) {
+        //final Scanner console = new Scanner( System.in );
         boolean notLogout = true;
         while ( notLogout ) {
             System.out.println( "Please enter a choice." );
@@ -44,7 +44,8 @@ public class Customer {
             System.out.println( "2. View and Schedule Service" );
             System.out.println( "3. Invoices" );
             System.out.println( "4. Logout\n" );
-            final String input = console.nextLine();
+            final String input = console.next();
+
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );
@@ -73,7 +74,7 @@ public class Customer {
                 continue;
             }
         }
-        console.close();
+        //console.close();
 
     }
 
@@ -91,7 +92,8 @@ public class Customer {
             System.out.println( "2. Add Car" );
             System.out.println( "3. Delete Car" );
             System.out.println( "4. Go Back\n" );
-            final String input = console.nextLine();
+            console.nextLine();
+            final String input = console.next();
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );
@@ -184,7 +186,7 @@ public class Customer {
         while ( true ) {
             System.out.println( "Please enter a choice." );
             System.out.println( "1. Go Back\n" );
-            final String input = console.nextLine();
+            final String input = console.next();
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );
@@ -291,6 +293,7 @@ public class Customer {
                 System.out.println( "Please enter a choice." );
                 System.out.println( "1. Select the car to delete" );
                 System.out.println( "2. Go Back\n" );
+                console.nextLine();
                 final String input = console.nextLine();
                 int choose = 0;
                 try {
@@ -337,12 +340,13 @@ public class Customer {
      *            the scanner
      */
     private static void viewAndScheduleService ( final Scanner console ) {
+        console.nextLine();
         while ( true ) {
             System.out.println( "Please enter a choice." );
             System.out.println( "1. View Service History" );
             System.out.println( "2. Schedule Service" );
             System.out.println( "3. Go Back\n" );
-            final String input = console.nextLine();
+            final String input = console.next();
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );
@@ -377,6 +381,7 @@ public class Customer {
      *            the scanner
      */
     private static void viewServiceHistory ( final Scanner console ) {
+        console.nextLine();
         while ( true ) {
             System.out.println( "Please enter the VIN number of a car." );
             final String vin = console.nextLine();
@@ -434,9 +439,11 @@ public class Customer {
      *            the scanner
      */
     private static void scheduleService ( final Scanner console ) {
+        console.nextLine();
         while ( true ) {
             System.out.println( "Please enter VIN number." );
-            final String vin = console.nextLine();
+            final String vin = console.next();
+            //System.out.println( "VIN:" + vin);
             System.out.println( "Please enter current mileage." );
             final String mileage = console.nextLine();
 
@@ -445,7 +452,8 @@ public class Customer {
             System.out.println( "2. Add Schedule Repair" );
             System.out.println( "3. View cart and select schedule time" );
             System.out.println( "4. Go Back\n" );
-            final String input = console.nextLine();
+            final String input = console.next();
+            //System.out.println( "next:" + input);
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );
@@ -523,6 +531,7 @@ public class Customer {
      *            the scanner
      */
     private static void addScheduleRepair ( final Scanner console ) {
+        console.nextLine();
         while ( true ) {
             System.out.println( "Please enter a choice." );
             System.out.println( "1. Engine Services" );

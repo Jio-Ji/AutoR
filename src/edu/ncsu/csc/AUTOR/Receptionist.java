@@ -6,20 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Receptionist {
-    private static int customer_id = 0;
-    private static int center_id = 0;
-    public Receptionist(long logindUserId) {
+    private static int receptionist_id = 0;
+    private static int customer_id     = 0;
+
+    private  static int center_id = 0;
+
+    public Receptionist(int logindUserId, Scanner scanner) {
         System.out.println("Access to Receptionist Landing page.");
-        // Customer user id is 10
-        final String str_customer_user = Long.toString(logindUserId);
-        // First 5 is customer id
-        final String str_customer_id = str_customer_user.substring( 0, 5 );
-        // Second 5 is center id
-        final String str_center_id = str_customer_user.substring( 5 );
-        // Get the customer id and his center id
-        customer_id = Integer.parseInt( str_customer_id );
-        center_id = Integer.parseInt( str_center_id );
-        main();
+        receptionist_id = logindUserId;
+        receptionistPage(scanner);
     }
 
     public static void receptionistPage (Scanner sc) {
@@ -31,26 +26,24 @@ public class Receptionist {
             System.out.println( "3.Log out" );
             //final Scanner sc = new Scanner( System.in );
 
-        while ( sc.hasNextLine() ) {
-            final String input = sc.nextLine();
+
+            final String input = sc.next();
             int count = 0;
             try {
                 count = Integer.valueOf(input);
             } catch(NumberFormatException e) {
-                System.out.println("Please enter a invalid choice.");
+                System.out.println("Please enter a valid choice.");
                 continue;
             }
             if (count == 1) {
-                sc.close();
+                //sc.close();
                 addNewCustomerFile(sc);
-                break;
             } else if (count == 2) {
-                sc.close();
+                //sc.close();
                 findCustomerWithPendingInvoices(sc);
-                break;
             } else if (count == 3) {
-                sc.close();
-                break;
+                //sc.close();
+                login = false;
             } else {
                 System.out.println("Invalid input");
                 System.out.println("Please enter number 1, 2 or 3.");
@@ -142,106 +135,130 @@ public class Receptionist {
         }
     }
 
-    private static void addNewCustomerFile(Scanner sc) {
+    public static void addNewCustomerFile ( final Scanner sc ) {
 
-        System.out.println( "Please enter customer name" );
-        final String name = sc.nextLine();
-        System.out.println( "Please enter customer address" );
-        final String address = sc.nextLine();
-        System.out.println( "Please enter customer Email address" );
-        final String email = sc.nextLine();
-        System.out.println( "Please enter customer Phone number" );
-        final int Phone = Integer.parseInt( sc.next() );
-        System.out.println( "Please enter customer Username" );
-        final String username = sc.next();
-        System.out.println( "Please enter VIN number" );
-        final String VIN = sc.next();
-        System.out.println( "Please enter car manufacturer" );
-        final String car_m = sc.next();
-        System.out.println( "Please enter mileage" );
-        final String mileage = sc.next();
-        System.out.println( "Please enter car's year" );
-        final String year = sc.next();
+        while ( true ) {
+            System.out.println( "Please enter customer name" );
+            sc.nextLine();
+            final String name = sc.nextLine();
+            System.out.println( "Please enter customer address" );
+            final String address = sc.nextLine();
+            System.out.println( "Please enter customer Email address" );
+            final String email = sc.next();
+            System.out.println( "Please enter customer Phone number" );
+            final int Phone = Integer.parseInt( sc.next() );
+            System.out.println( "Please enter customer Username" );
+            final String username = sc.next();
+            System.out.println( "Please enter VIN number" );
+            final String VIN = sc.next();
+            System.out.println( "Please enter car manufacturer" );
+            final String car_m = sc.next();
+            System.out.println( "Please enter mileage" );
+            final String mileage = sc.next();
+            System.out.println( "Please enter car's year" );
+            final String year = sc.next();
 
-        // Connection conn = null;
-        Statement stmt = null;
-        try (
-                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
-                        "123" ) ) {
-            stmt = conn.createStatement();
-            stmt.executeUpdate( "DROP TABLE ASSOCIATE" );
-            stmt.executeUpdate( "DROP TABLE CUSTOMER" );
-            stmt.executeUpdate( "DROP TABLE VEHICLE" );
+            // Connection conn = null;
+            int b = 0;
+            final List<Integer> c = new ArrayList<>();
+            Statement stmt = null;
+            try (
+                    Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                            "123" ) ) {
+                stmt = conn.createStatement();
 
-            // CUSTOMER
-            stmt.executeUpdate( "CREATE TABLE CUSTOMER " + "(CUSTOMER_ID INTEGER, CUSTOMER_NAME VARCHAR(20), "
-                    + "ADDRESS VARCHAR(50), C_EMAIL VARCHAR(20), C_PHONE INTEGER, "
-                    + "C_USERNAME VARCHAR(20), CUSTOMER_STATUS CHAR(1) DEFAULT 'f', CUSTOMER_CENTER_ID INTEGER)" );
-            stmt.executeUpdate( "ALTER TABLE CUSTOMER " + "ADD CONSTRAINT customer_pk PRIMARY KEY (CUSTOMER_ID)" );
-            // VEHECLE
-            stmt.executeUpdate( "CREATE TABLE VEHICLE " + "(VIN VARCHAR(20) PRIMARY KEY, MANU VARCHAR(10), "
-                    + "MILEAGE VARCHAR(10), YEAR INTEGER)" );
-            stmt.executeUpdate( "CREATE TABLE ASSOCIATE " + "(VIN VARCHAR(20), C_ID VARCHAR(20)) " );
-            stmt.executeUpdate(
-                    "ALTER TABLE ASSOCIATE " + "ADD CONSTRAINT vin_pk FOREIGN KEY(vin)REFERENCES vehicle(vin)" );
-            stmt.executeUpdate( "ALTER TABLE ASSOCIATE "
-                    + "ADD CONSTRAINT cus_pk FOREIGN KEY(C_ID)REFERENCES CUSTOMER(CUSTOMER_ID)" );
-            stmt.executeUpdate( "ALTER TABLE ASSOCIATE " + "ADD CONSTRAINT PK PRIMARY KEY (VIN, C_ID)" );
-            // insert customer data into the database
-            final PreparedStatement ps = conn
-                    .prepareStatement( "INSERT INTO CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, ADDRESS, "
-                            + "C_EMAIL,C_PHONE, C_USERNAME, CUSTOMER_CENTER_ID, CUSTOMER_STATUS) VALUES(?,?,?,?,?,?,?,'t')" );
-            ps.setInt( 1, customer_id );
-            ps.setString( 2, name );
-            ps.setString( 3, address );
-            ps.setString( 4, email );
-            ps.setInt( 5, Phone );
-            ps.setString( 6, username );
-            ps.setInt( 7, center_id );
-            ps.executeUpdate();
-            ps.close();
+                // find center id
+                final String queryCustomer = "SELECT emp_center FROM emp WHERE emp_id =" + receptionist_id;
 
-            // insert vehicle data into the database
-            final PreparedStatement ws = conn
-                    .prepareStatement( "INSERT INTO VEHICLE (VIN, MANU, MILEAGE, " + "YEAR) VALUES(?,?,?,?)" );
-            ws.setString( 1, VIN );
-            ws.setString( 2, car_m );
-            ws.setString( 3, mileage );
-            ws.setString( 4, year );
-            ws.executeUpdate();
-            ws.close();
-        }
+                final ResultSet rs = stmt.executeQuery( queryCustomer );
+                while ( rs.next() ) {
+                    center_id = rs.getInt( "emp_center" );
+                }
+                // find customer size
+                final String queryFindCustomer = "SELECT customer_id FROM customer WHERE customer_center_id ="
+                        + center_id;
+                final ResultSet qs = stmt.executeQuery( queryFindCustomer );
+                while ( qs.next() ) {
+                    b = qs.getInt( "customer_id" );
+                    c.add( b );
+                }
 
-        catch ( final SQLException e ) {
-            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
-        }
-        catch ( final Exception e ) {
-            e.printStackTrace();
-        }
-        finally {
-            close( stmt );
-            // close(conn);
-        }
-        System.out.println( "All information insert!" );
-        System.out.println( "1. GO BACK" );
+                // determine customer id
+                if ( c.size() == 0 ) {
+                    customer_id = 50000;
+                }
+                else {
+                    customer_id = 50000 + c.size();
+                }
 
-        while ( sc.hasNextLine() ) {
-            final String input = sc.nextLine();
-            int count = 0;
-            try {
-                count = Integer.valueOf( input );
+                // generate user id and password
+                final String center_id_string = String.valueOf( center_id );
+                final String customer_id_string = String.valueOf( customer_id );
+                final String loginUserName = customer_id_string + center_id_string;
+                final int dex = name.lastIndexOf( " " );
+                final String passWord = name.substring( dex + 1 );
+
+                // insert data into user_pw
+                stmt.executeUpdate(
+                        "insert into user_pw values ('" + loginUserName + "', '" + passWord + "', " + 3 + ")" );
+
+                // insert customer data into the database
+                final PreparedStatement ps = conn
+                        .prepareStatement( "INSERT INTO CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, ADDRESS, "
+                                + "C_EMAIL,C_PHONE, C_USERNAME, CUSTOMER_STATUS, CUSTOMER_CENTER_ID) VALUES(?,?,?,?,?,?,'t',?)" );
+                ps.setInt( 1, customer_id );
+                ps.setString( 2, name );
+                ps.setString( 3, address );
+                ps.setString( 4, email );
+                ps.setInt( 5, Phone );
+                ps.setString( 6, loginUserName );
+                ps.setInt( 7, center_id );
+                ps.executeUpdate();
+                ps.close();
+                // insert vehicle data into the database
+                final PreparedStatement ws = conn
+                        .prepareStatement( "INSERT INTO VEHICLE (VIN, MANU, MILEAGE, " + "YEAR) VALUES(?,?,?,?)" );
+                ws.setString( 1, VIN );
+                ws.setString( 2, car_m );
+                ws.setString( 3, mileage );
+                ws.setString( 4, year );
+                ws.executeUpdate();
+                ws.close();
+                // insert data into associate table
+                stmt.executeUpdate(
+                        "insert into associate values ('" + VIN + "', " + customer_id + ", " + center_id + ")" );
             }
-            catch ( final NumberFormatException e ) {
-                continue;
-            }
 
-            if ( count == 1 ) {
-                main();
-                break;
+            catch ( final SQLException e ) {
+                System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
             }
+            catch ( final Exception e ) {
+                e.printStackTrace();
+            }
+            finally {
+                close( stmt );
+                // close(conn);
+            }
+            System.out.println( "All information insert!" );
+            System.out.println( "1. GO BACK" );
+
+            while ( sc.hasNextLine() ) {
+                final String input = sc.nextLine();
+                int count = 0;
+                try {
+                    count = Integer.valueOf( input );
+                }
+                catch ( final NumberFormatException e ) {
+                    continue;
+                }
+
+                if ( count == 1 ) {
+                    receptionistPage(sc);
+                    break;
+                }
+            }
+            //sc.close();
         }
-        sc.close();
-
     }
 
     static void close ( final Statement st ) {

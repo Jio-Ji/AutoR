@@ -10,8 +10,7 @@ import java.util.Scanner;
 public class AUTOR {
 
     public static void main(String[] args) {
-        InitializeTables temp = new InitializeTables();// 初始化所有TABLE，记得在init里边启用constructor
-        home();
+        //InitializeTables temp = new InitializeTables();// 初始化所有TABLE，记得在init里边启用constructor
 
         Scanner scanner = new Scanner(System.in);
         home(scanner);
@@ -20,8 +19,8 @@ public class AUTOR {
     }
 
     // the home page
-    public static void home() {
-        Scanner scanner = new Scanner(System.in);
+    public static void home(Scanner scanner) {
+
         int action = 0;
         while (true) {
             System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
@@ -51,17 +50,19 @@ public class AUTOR {
                         if (scanner.hasNext()) {
                             num = Long.parseLong(scanner.next());
                         }
+                        System.out.println("Please input your password.");
+                        String pwd = scanner.next();
                         System.out.println("Please input the index to indicate your role: \n" +
-                                "1.Admin 2.Manager 3.Customer 4.Receptionist 5.Mechanic\n");
+                                "1.Admin 2.Manager 3.Customer 4.Receptionist 5.Mechanic \n");
                         if (scanner.hasNextInt()) {
-                            Insert.user_pw_Insert(num, scanner.nextInt());
+                            Insert.user_pw_Insert(num, pwd, scanner.nextInt());
                         } else {
                             System.out.println("Invalid Role.");
                         }
                         console.close();
-                        home();
-                        break;
-                    }else if (action == 3) {
+                        //home(scanner);
+                        //break;
+                    } else if (action == 3) {
                         console.close();
                         System.out.println("Action: Exit.");
                         break;
@@ -77,7 +78,6 @@ public class AUTOR {
                 System.out.println("Please input a valid index for actions.");
             }
         }
-        scanner.close();
     }
 
     // ready to login
@@ -109,8 +109,8 @@ public class AUTOR {
                     if (action == 1) {
                         System.out.println("Action: Sign-In.\n");
                         console.close();
-                        checkUserPW(id, password);
-                        continue;
+                        checkUserPW(id, password, scanner);
+                        break;
                     } else if (action == 2) {
                         console.close();
                         System.out.println("Action: Go back.");
@@ -167,41 +167,43 @@ public class AUTOR {
                         "123" ) ) {
 
             stmt = conn.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM USERPW");
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM user_pw WHERE u_id=" + id);
 
             long USERPW_id = 0;
             String USERPW_pwd = "";
             int USERPW_role = 0;
             while (resultSet.next()) {
                 USERPW_id = resultSet.getLong("u_id");
-                USERPW_pwd = resultSet.getString("PWD");
-                USERPW_role = resultSet.getInt("ROLE");
+                USERPW_pwd = resultSet.getString("u_pwd");
+                USERPW_role = resultSet.getInt("u_role");
 
                 if (resultSet.next()) {
                     System.out.println("Multi user match!");
                     System.out.println("Something goes wrong!");
                     System.out.println("In AUTOR, checkUserPW() method");
                 }
-
-
             }
 
-            if (id.equals(String.valueOf(USERPW_id)) && password.equals(USERPW_pwd)) {
+            System.out.println(id + ":" + String.valueOf(USERPW_id));
+            System.out.println(password + ":" + String.valueOf(USERPW_pwd));
+
+            if (id.equals(String.valueOf(USERPW_id)) && password.equals(String.valueOf(USERPW_pwd))) {
+                System.out.println("Logging in...\n");
                 switch (USERPW_role) {
                     case 1:
                         Admin admin = new Admin((int)USERPW_id);
                         break;
                     case 2:
-                        //Manager manager = new Manager((long)USERPW_id);
+                        Manager manager = new Manager((int) USERPW_id, scanner);
                         break;
                     case 3:
-                        //Customer customer = new Customer((long)USERPW_id);
+                        Customer customer = new Customer((long) USERPW_id, scanner);
                         break;
                     case 4:
-                        //Receptionist receptionist = new Receptionist((long)USERPW_id);
+                        Receptionist receptionist = new Receptionist((int) USERPW_id, scanner);
                         break;
                     case 5:
-                        //Mechanic mechanic = new Mechanic((long)USERPW_id);
+                        Mechanic mechanic = new Mechanic((int) USERPW_id, scanner);
                         break;
                     default:
                         System.out.println("In AUTOR, checkUserPW() method");
