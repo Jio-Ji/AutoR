@@ -938,7 +938,6 @@ public class Customer {
      *            the scanner
      */
     private static void proceedWithScheduling ( final Scanner console, final String vin ) {
-        console.nextLine();
         final int[][][] time = new int[4][7][11];
         Statement stmt = null;
         ResultSet rs = null;
@@ -1303,7 +1302,11 @@ public class Customer {
                             + "', " + eachCost.get( i ) + ")" );
                 }
                 System.out.println( "Your service has been successfully booked!" );
-
+                final int size = cartService.size();
+                for ( int i = 0; i < size; i++ ) {
+                    cartService.remove( cartService.size() - 1 );
+                }
+                break;
             }
             catch ( final SQLException e ) {
                 System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
@@ -1327,6 +1330,7 @@ public class Customer {
      *            the scanner
      */
     private static void invoices ( final Scanner console ) {
+        console.nextLine();
         while ( true ) {
             // display invoices
             System.out.println( "The list of your invoices:" );

@@ -2,10 +2,12 @@ package edu.ncsu.csc.AUTOR;
 
 import java.sql.*;
 import java.util.Scanner;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 public class Admin {
 
-    public Admin(long loginedUserId) {
+    public Admin(long loginedUserId, Scanner scanner) {
         System.out.println("Access to Admin Landing page.");
         home(scanner);
     }
@@ -325,11 +327,10 @@ public class Admin {
                 continue;
             }
             if ( count == 1 ) {
-                center();
                 break;
             }
         }
-        scan.close();
+
     }
     static void close ( final Statement st ) {
         if ( st != null ) {
