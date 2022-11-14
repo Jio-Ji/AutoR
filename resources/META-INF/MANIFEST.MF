@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: edu.ncsu.csc.AUTOR.AUTOR
+Class-Path: mybatis-3.5.6.jar ojdbc8.jar
+
