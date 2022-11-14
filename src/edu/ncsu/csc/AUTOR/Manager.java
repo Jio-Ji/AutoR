@@ -776,7 +776,7 @@ public class Manager {
             e.printStackTrace();
         } finally {
             close(stmt);
-            // close(conn);
+
         }
     }
 
@@ -845,7 +845,6 @@ public class Manager {
                 break;
             }
         }
-        //scan.close();
     }
 
 

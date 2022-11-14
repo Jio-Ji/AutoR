@@ -229,31 +229,78 @@ public class Admin {
                 Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
                         "123" ) ) {
             stmt = conn.createStatement();
-            stmt.executeUpdate( "DROP TABLE EMP" );
-            stmt.executeUpdate( "DROP TABLE CENTER" );
+//            stmt.executeUpdate( "DROP TABLE EMP" );
+//            stmt.executeUpdate( "DROP TABLE CENTER" );
 
 
-            // CENTER
-            stmt.executeUpdate( "CREATE TABLE CENTER " + "(CENTER_ID VARCHAR(20), CENTER_ADD VARCHAR(50),STATE VARCHAR(20), "
-                    + "CENTER_TELE INTEGER)" );
-            // Add a primary key
-            stmt.executeUpdate( "ALTER TABLE CENTER " + "ADD CONSTRAINT center_pk PRIMARY KEY (CENTER_ID)" );
+//            // CENTER
+//            stmt.executeUpdate( "CREATE TABLE CENTER " + "(CENTER_ID VARCHAR(20), CENTER_ADD VARCHAR(50),STATE VARCHAR(20), "
+//                    + "CENTER_TELE INTEGER)" );
+//            // Add a primary key
+//            stmt.executeUpdate( "ALTER TABLE CENTER " + "ADD CONSTRAINT center_pk PRIMARY KEY (CENTER_ID)" );
+//
+//            // EMP
+//            stmt.executeUpdate( "CREATE TABLE EMP " + "(EMP_ID INTEGER PRIMARY KEY , EMP_NAME VARCHAR(20), "
+//                    + "EMP_ADDRESS VARCHAR(20), EMP_EMAIL VARCHAR(20), EMP_PHONE INTEGER, CENTER_ID VARCHAR(20), EMP_ROLE varchar(20))" );
+//            // Add a primary key
+//            stmt.executeUpdate( "ALTER TABLE EMP " + "ADD CONSTRAINT CENTER_FK FOREIGN KEY (CENTER_ID)REFERENCES CENTER(CENTER_ID)" );
+//
+//            final PreparedStatement ps = conn
+//                    .prepareStatement( "INSERT INTO CENTER (CENTER_ID, CENTER_ADD, CENTER_TELE,STATE "
+//                            + ") VALUES(?,?,?,?)" );
+//            ps.setInt( 1, 1 );
+//            ps.setString( 2, address );
+//            ps.setString( 3, tele );
+//            ps.setString( 4, "f" );
+//            ps.executeUpdate();
+//            ps.close();
+            System.out.println( "Please enter center ID" );
+            final String id = scan.next();
+            System.out.println( "Please enter center address" );
+            scan.nextLine();
+            final String address = scan.nextLine();
+            System.out.println( "Please enter center tele" );
+            final String tele = scan.next();
+            System.out.println( "Do you want to open on Saturday? (t/f)" );
+            final String onSat = scan.next();
 
-            // EMP
-            stmt.executeUpdate( "CREATE TABLE EMP " + "(EMP_ID INTEGER PRIMARY KEY , EMP_NAME VARCHAR(20), "
-                    + "EMP_ADDRESS VARCHAR(20), EMP_EMAIL VARCHAR(20), EMP_PHONE INTEGER, CENTER_ID VARCHAR(20), EMP_ROLE varchar(20))" );
-            // Add a primary key
-            stmt.executeUpdate( "ALTER TABLE EMP " + "ADD CONSTRAINT CENTER_FK FOREIGN KEY (CENTER_ID)REFERENCES CENTER(CENTER_ID)" );
+            System.out.println( "\nPlease input your manager's information." );
+            System.out.println( "What's your manager's first name?" );
+            String m_name = scan.next();
+            System.out.println( "What's your manager's last name?" );
+            m_name += " " + scan.next();
+            System.out.println( "What's your manager's user name?" );
+            final String userName = scan.next();
+            System.out.println( "What's your manager's address?" );
+            scan.nextLine();
+            final String m_address = scan.nextLine();
+            System.out.println( "What's your manager's email?" );
+            final String email = scan.next();
+            System.out.println( "What's your manager's phone number?" );
+            final String phone = scan.next();
+            System.out.println( "What's your manager's password?" );
+            final String pwd = scan.next();
+            System.out.println( "What's your manager's salary?" );
+            final String salary = scan.next();
+            System.out.println( "What's your manager's id?" );
+            final String m_id = scan.next();
 
-            final PreparedStatement ps = conn
-                    .prepareStatement( "INSERT INTO CENTER (CENTER_ID, CENTER_ADD, CENTER_TELE,STATE "
-                            + ") VALUES(?,?,?,?)" );
-            ps.setInt( 1, 1 );
-            ps.setString( 2, address );
-            ps.setString( 3, tele );
-            ps.setString( 4, "unStepUp" );
-            ps.executeUpdate();
-            ps.close();
+            System.out.println( "What's your min wage for mechanics?" );
+            final String min = scan.next();
+            System.out.println( "What's your max wage for mechanics?" );
+            final String max = scan.next();
+            System.out.println( "What's your hourly rate for mechanics?" );
+            final String hour = scan.next();
+
+            stmt.executeUpdate( "insert into center values ('" + id + "', '" + address + "', '" + tele
+                    + "', '" + onSat + "')" );
+            stmt.executeUpdate( "insert into emp values ('" + m_id + "', '" + id + "')" );
+            stmt.executeUpdate( "insert into manager values ('" + m_id + "', '" + m_name + "', '" + m_address + "', '" + email
+                    + "', '" + phone + "', '" + salary + "')" );
+            stmt.executeUpdate( "insert into user_pw values ('" + userName + "', '" + pwd + "', " + 2 + ")" );
+            stmt.executeUpdate( "insert into centerSalary values ('" + id + "', '" + min + "', '" + max
+                    + "', '" + hour + "')" );
+            System.out.println( "All information insert!" );
         }
         catch ( final SQLException e ) {
             System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
