@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AutoR1:jar">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="AutoR1_jar.jar">
+      <element id="archive" name="AutoR1.jar">
+        <element id="module-output" name="AutoR1" />
+      </element>
+      <element id="file-copy" path="$USER_HOME$/Downloads/mybatis-3.5.6.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/../../../../app/Shaolong/product/21c/dbhomeXE/jdbc/lib/ojdbc8.jar" />
+    </root>
+  </artifact>
+</component>

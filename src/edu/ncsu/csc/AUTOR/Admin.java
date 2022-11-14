@@ -14,8 +14,12 @@ public class Admin {
         int action = 0;
         while (true) {
             System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
-            System.out.println("1. Add Store");
-            System.out.println("2. Exit\n");
+
+            System.out.println("1. System Set Up");
+            System.out.println("2. Add New Store");
+            System.out.println("3. Add New Service");
+            System.out.println("4. Logout\n");
+
             action = 0;
             String s = scanner.next();
             Scanner console = new Scanner(s);

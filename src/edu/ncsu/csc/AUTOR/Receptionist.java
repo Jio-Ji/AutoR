@@ -117,8 +117,8 @@ public class Receptionist {
         System.out.println( "All information showed!" );
         System.out.println( "1. GO BACK" );
 
-        while ( sc.hasNextLine() ) {
-            final String input = sc.nextLine();
+        while ( sc.hasNext() ) {
+            final String input = sc.next();
             int count = 0;
             try {
                 count = Integer.valueOf( input );
@@ -128,8 +128,6 @@ public class Receptionist {
             }
 
             if ( count == 1 ) {
-                sc.close();
-                receptionistPage(sc);
                 break;
             }
         }
@@ -197,7 +195,6 @@ public class Receptionist {
                 final String loginUserName = customer_id_string + center_id_string;
                 final int dex = name.lastIndexOf( " " );
                 final String passWord = name.substring( dex + 1 );
-
                 // insert data into user_pw
                 stmt.executeUpdate(
                         "insert into user_pw values ('" + loginUserName + "', '" + passWord + "', " + 3 + ")" );
@@ -240,7 +237,6 @@ public class Receptionist {
                 // close(conn);
             }
             System.out.println( "All information insert!" );
-            System.out.println( "1. GO BACK" );
 
             while ( sc.hasNextLine() ) {
                 final String input = sc.nextLine();
@@ -253,10 +249,10 @@ public class Receptionist {
                 }
 
                 if ( count == 1 ) {
-                    receptionistPage(sc);
                     break;
                 }
             }
+            break;
             //sc.close();
         }
     }
