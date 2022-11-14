@@ -29,8 +29,9 @@ public class Insert {
 
             switch (r) {
                 case 1:
-                    System.out.println("The admin functions can just be accessible directly without logging in first.\n");
-                    return;
+                    //System.out.println("The admin functions can just be accessible directly without logging in first.\n");
+                    //return;
+                    break;
                 case 2:
                     break;
                 case 3:

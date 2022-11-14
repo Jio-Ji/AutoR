@@ -7,10 +7,11 @@ public class Admin {
 
     public Admin(long loginedUserId) {
         System.out.println("Access to Admin Landing page.");
-        center();
+        home(scanner);
     }
-    private static void center(){
-        Scanner scanner = new Scanner(System.in);
+
+    private static void home(Scanner scanner){
+        //Scanner scanner = new Scanner(System.in);
         int action = 0;
         while (true) {
             System.out.println("This is CSC 440 edu.ncsu.csc.AUTOR.AUTOR system application.");
@@ -32,14 +33,20 @@ public class Admin {
                     }
                     if (action == 1) {
                         System.out.println("Action: Setup Store.");
-                        console.close();
-                        AddStore(scanner);
-                        break;
+                        setUp(scanner);
                     } else if (action == 2) {
+                        console.close();
+                        addStore(scanner);
+                        System.out.println("Action: Go back to home page.");
+                    } else if (action == 3){
+                        console.close();
+                        addNewService(scanner);
+                        System.out.println("Action: Go back to home page.");
+                    }else if (action == 4) {
                         console.close();
                         System.out.println("Action: Exit.");
                         break;
-                    } else {
+                    }  else {
                         System.out.println("Please input a valid index for actions.");
                         continue;
                     }
@@ -51,18 +58,173 @@ public class Admin {
                 System.out.println("Please input a valid index for actions.");
             }
         }
-        scanner.close();
+        //scanner.close();
     }
-    private static void AddStore(Scanner scan) {
 
-        System.out.println( "Please enter center address" );
-        final String address = scan.next();
-        System.out.println( "Please enter center tele" );
-        final String tele = scan.next();
+    private static void addNewService ( final Scanner sc ) {
+        boolean login = true;
+        while ( login ) {
+            System.out.println( "A. Enter existing service category" );
+            sc.nextLine();
+            final String s_category = sc.nextLine();
+            System.out.println( "B. Service Name" );
+            final String s_name = sc.nextLine();
+            System.out.println( "C. Duration of a service" );
+            final int s_time = sc.nextInt();
+
+            System.out.println( "1. Add Service" );
+            System.out.println( "2. Go Back" );
+
+            while ( sc.hasNext() ) {
+                final String input = sc.next();
+                int count = 0;
+                try {
+                    count = Integer.valueOf( input );
+                }
+                catch ( final NumberFormatException e ) {
+                    continue;
+                }
+                if ( count == 1 ) {
+                    Statement stmt = null;
+                    try {
+                        final Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe",
+                                "system", "123" );
+                        stmt = conn.createStatement();
+                        final String s_type = "r";
+                        if ( s_category.equals( "Engine Services" ) ) {
+                            final String s_id = "116";
+                            final int s_pTier = 2;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+
+                        }
+                        else if ( s_category.equals( "Exhaust Services" ) ) {
+                            final String s_id = "117";
+                            final int s_pTier = 3;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+                        }
+                        else if ( s_category.equals( "Electrical Services" ) ) {
+                            final String s_id = "118";
+                            final int s_pTier = 2;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+                        }
+                        else if ( s_category.equals( "Transmission Services" ) ) {
+                            final String s_id = "119";
+                            final int s_pTier = 4;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+                        }
+                        else if ( s_category.equals( "Tire Services" ) ) {
+                            final String s_id = "120";
+                            final int s_pTier = 3;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+                        }
+                        else if ( s_category.equals( "Heating and A/C Services" ) ) {
+                            final String s_id = "121";
+                            final int s_pTier = 3;
+                            stmt.executeUpdate( "insert into service values ('" + s_id + "', " + s_time + ", " + s_pTier
+                                    + ", '" + s_name + "')" );
+                            stmt.executeUpdate( "insert into serviceType values ('" + s_id + "', '" + s_name + "', '"
+                                    + s_type + "')" );
+                        }
+                        System.out.println( "Service added successfully!" );
+
+                    }
+                    catch ( final SQLException e ) {
+                        System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+                    }
+                    catch ( final Exception e ) {
+                        e.printStackTrace();
+                    }
+                    finally {
+                        close( stmt );
+                    }
+                    break;
+                }
+                else if ( count == 2 ) {
+
+                    login = false;
+                    break;
+                }
+            }
+        }
+
+    }
+
+    private static void setUp(Scanner scan){
+        boolean runner = true;
+        while (runner) {
+            System.out.println("Please enter the name of input file that contains the service.");
+            String setup = scan.next();
+            System.out.println("Please enter the name of input file that contains the store general information.");
+            String pop = scan.next();
+            while (true) {
+                System.out.println("Please enter the choice.");
+                System.out.println("1. Upload service general information");
+                System.out.println("2. Upload store general information");
+                System.out.println("3. Go Back");
+                final String input = scan.next();
+                int choose = 0;
+                try {
+                    choose = Integer.parseInt( input );
+                }
+                catch ( final NumberFormatException e ) {
+                    System.out.println( "Your choice is invalid.\n" );
+                    continue;
+                }
+                if ( choose == 1 || choose == 2 ) {
+
+                    try (
+                            Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                                    "123" ) ) {
+
+                        final ScriptRunner run = new ScriptRunner( conn );
+                        run.setLogWriter( null );
+                        run.setStopOnError( true );
+                        if (choose == 1) {
+                            run.runScript( Resources.getResourceAsReader( setup ) );
+                        } else {
+                            run.runScript( Resources.getResourceAsReader( pop ) );
+                        }
+                    }
+                    catch ( final SQLException e ) {
+                        System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+                    }
+                    catch ( final Exception e ) {
+                        System.out.println("fail");
+                        break;
+                    }
+                    System.out.println("success");
+                } else if ( choose == 3 ) {
+                    runner = false;
+                    break;
+                }
+                else {
+                    System.out.println( "Your choice is invalid.\n" );
+                    continue;
+                }
+            }
+        }
+    }
 
 
+    private static void addStore(Scanner scan) {
         // Connection conn = null;
         Statement stmt = null;
+        ResultSet resultSet = null;
         try (
                 Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
                         "123" ) ) {
@@ -93,22 +255,21 @@ public class Admin {
             ps.executeUpdate();
             ps.close();
         }
-
         catch ( final SQLException e ) {
             System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
         }
         catch ( final Exception e ) {
-            e.printStackTrace();
+            System.out.println();
         }
         finally {
             close( stmt );
             // close(conn);
         }
-        System.out.println( "All information insert!" );
+        //System.out.println( "All information insert!" );
         System.out.println( "1. GO BACK" );
 
-        while ( scan.hasNextLine() ) {
-            final String input = scan.nextLine();
+        while ( scan.hasNext() ) {
+            final String input = scan.next();
             int count = 0;
             try {
                 count = Integer.valueOf( input );
@@ -116,7 +277,6 @@ public class Admin {
             catch ( final NumberFormatException e ) {
                 continue;
             }
-
             if ( count == 1 ) {
                 center();
                 break;

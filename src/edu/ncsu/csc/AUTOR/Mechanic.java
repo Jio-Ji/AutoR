@@ -12,6 +12,7 @@ public class Mechanic {
 
         currentUserId = loginedUserId;
         //center();
+        //scanner.nextLine();
         home(scanner);
     }
 
@@ -38,7 +39,7 @@ public class Mechanic {
             System.out.println( "3. Request Swap" );
             System.out.println( "4. Accept/Reject Swap" );
             System.out.println( "5. Logout\n" );
-            final String input = console.nextLine();
+            final String input = console.next();
             int choose = 0;
             try {
                 choose = Integer.parseInt( input );

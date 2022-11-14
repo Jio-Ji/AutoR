@@ -10,8 +10,8 @@ import java.util.Scanner;
 public class AUTOR {
 
     public static void main(String[] args) {
-        //InitializeTables temp = new InitializeTables();// 初始化所有TABLE，记得在init里边启用constructor
-
+        //InitializeTables temp = new InitializeTables();//
+        //user_pw();
         Scanner scanner = new Scanner(System.in);
         home(scanner);
         scanner.close();
@@ -62,6 +62,7 @@ public class AUTOR {
                             System.out.println("Invalid Role.");
                         }
                         console.close();
+                        System.out.println("Account created, go back now.");
                         //home(scanner);
                         //break;
                     } else if (action == 3) {
@@ -93,6 +94,13 @@ public class AUTOR {
             String id = scanner.next();
             System.out.println("Please input your password (If you don't know or don't have, just input something).");
             String password = scanner.next();
+            System.out.println("Do you want to login as Admin? (y/n)");
+            String admin = scanner.next();
+            if (admin.equals("y")) {
+                System.out.println();
+                Admin a = new Admin(0, scanner);
+                break;
+            }
 //            System.out.println("What's your next action?");
             System.out.println("Please input the index at first for actions.");
             System.out.println("1. Sign-In");
@@ -169,7 +177,8 @@ public class AUTOR {
                         "123")) {
 
             stmt = conn.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM user_pw WHERE u_id=" + id);
+            //System.out.println(id + "|" + password);
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM user_pw WHERE u_id='" + id + "'");
 
             long USERPW_id = 0;
             String USERPW_pwd = "";
@@ -193,7 +202,7 @@ public class AUTOR {
                 System.out.println("Logging in...\n");
                 switch (USERPW_role) {
                     case 1:
-                        Admin admin = new Admin((int) USERPW_id);
+                        Admin admin = new Admin((int) USERPW_id, scanner);
                         break;
                     case 2:
                         Manager manager = new Manager((int) USERPW_id, scanner);
@@ -226,6 +235,29 @@ public class AUTOR {
             // close(conn);
         }
     }
+
+    /*public static void user_pw() {
+        Statement stmt = null;
+        try (
+                Connection conn = DriverManager.getConnection( "jdbc:oracle:thin:@localhost:1521:xe", "system",
+                        "123" )) {
+            stmt = conn.createStatement();
+            stmt.executeUpdate("create table user_pw (" +
+                    "u_id varchar(20) primary key, " +
+                    "u_pwd varchar(20)," +
+                    "u_role integer)");
+        }catch ( final SQLException e ) {
+            System.err.format( "SQL State: %s\n%s", e.getSQLState(), e.getMessage() );
+        }
+        catch ( final Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            close( stmt );
+            // close(conn);
+        }
+    }*/
+
 
     /**
      * Close the statement.

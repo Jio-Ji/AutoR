@@ -238,8 +238,9 @@ public class Receptionist {
             }
             System.out.println( "All information insert!" );
 
-            while ( sc.hasNextLine() ) {
-                final String input = sc.nextLine();
+            while ( true ) {
+                System.out.println( "1. GO BACK" );
+                final String input = sc.next();
                 int count = 0;
                 try {
                     count = Integer.valueOf( input );
